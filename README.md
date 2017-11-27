@@ -3,6 +3,7 @@
 # local Prototyp
 Requirements:
 -Virtualbox
+https://grantwinney.com/how-to-create-a-raspberry-pi-virtual-machine-vm-in-virtualbox/
 -debian-VM
 http://debian.uvigo.es/debian-cd/9.2.1/multi-arch/iso-cd/
 
