@@ -16,3 +16,6 @@ https://virtualboxes.org/doc/installing-guest-additions-on-debian/
 sh /media/cdrom/VBoxLinuxAdditions.run
 % reboot
 % optional: guvcview installieren um kamera zu testen
+
+Used repositories:
+https://github.com/LukashenkoEvgeniy/People-Counter
