@@ -7,6 +7,10 @@ https://grantwinney.com/how-to-create-a-raspberry-pi-virtual-machine-vm-in-virtu
 -debian-VM
 http://debian.uvigo.es/debian-cd/9.2.1/multi-arch/iso-cd/
 
+- install openCV: find the installation script here:
+http://milq.github.io/install-opencv-ubuntu-debian/
+https://github.com/milq/milq/blob/master/scripts/bash/install-opencv.sh
+
 % TODO check if needed
 (apt-get install build-essential module-assistant
 m-a prepare)
