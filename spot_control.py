@@ -15,55 +15,176 @@ import os
 from json.decoder import JSONDecodeError
 
 class spot_control():
+  pp = pprint.PrettyPrinter()
   
   __spotify = None
+  __playlist_id = None
+  __user_id = None
+  __played_song_ids = []
   
-  def __init__(self):
+  __rec_limit = 1
+  __rec_last_genre = None
+  
+  __possible_grenres = []
+  
+  def __init__(self, empty = True):
+    print(os.path.dirname(spotipy.__file__))
+    
     f = open("spotify_credentials", "r")
     c = csv.reader(f)
     for line in c:
-      print(line)
-      sci = line[0]
-      scs = line[1]
-      scr = line[2]
-      scu = line[3]
+      if len(line) >= 3:
+        sci = line[0]
+        scs = line[1]
+        scr = line[2]
+      if len(line) == 4:
+        scu = line[3]
+      else:
+        scu = input("Please provide spotify username: ")
       break
     f.close()
     
+    scope = ['user-modify-playback-state', 'playlist-read-private', 'playlist-modify-private', 'user-read-currently-playing', 'user-read-playback-state', 'playlist-modify-private']
+    scope = " ".join(scope)
+    
     try:
-      token = util.prompt_for_user_token(username=scu, client_id = sci, client_secret=scs, redirect_uri=scr, scope='user-modify-playback-state')
+      token = util.prompt_for_user_token(username=scu, client_id = sci, client_secret=scs, redirect_uri=scr, scope=scope)
     except (AttributeError, JSONDecodeError):
       os.remove(f".cache-{scu}")
-      token = util.prompt_for_user_token(username=scu, client_id = sci, client_secret=scs, redirect_uri=scr, scope='user-modify-playback-state')
-      
+      token = util.prompt_for_user_token(username=scu, client_id = sci, client_secret=scs, redirect_uri=scr, scope=scope)
+    
+    self.__user_id = scu
+    
     self.__spotify = spotipy.Spotify(auth=token)
+    
+    # Search for autodj playlist
+    
+    tracks = None
+    playlists = self.__spotify.current_user_playlists()
+    for l in playlists['items']:
+      if l['name'] == "AutoDJ":
+        print("* Found: " + l['id'])
+        # self.pp.pprint(l)
+        
+        self.__playlist_id = l['id']
+        # Get Tracks
+        tracks = self.__spotify.user_playlist_tracks(self.__user_id, self.__playlist_id) #l['tracks']['href']
+        
+        # self.pp.pprint(tracks)
+        break
+    
+    if self.__playlist_id == None:
+      print("* Creating Playlist ...")
+      playlist = self.__spotify.user_playlist_create(user=self.__user_id, name="AutoDJ", public=False)
+      
+      # self.pp.pprint(playlist)
+      
+      if 'id' in playlist:
+        self.__playlist_id = playlist['id']
+      else:
+        print("@ Could not create playlist")
+        exit(1)
+    
+    # Empty playlist
+    if empty and tracks != None:
+      print("* Deleting all tracks from playlist")
+      track_uris = []
+      #self.pp.pprint(tracks)
+      for t in tracks['items']:
+        track_uris.append(t['track']['uri'])
+      
+      self.__spotify.user_playlist_remove_all_occurrences_of_tracks(self.__user_id, self.__playlist_id, track_uris)
+      tracks = None
+    
+    # Taking tracks into already played ...
+    if tracks != None:
+      for t in tracks['items']:
+        #self.pp.pprint(t)
+        
+        self.__played_song_ids.append(t['track']['id'])
+    
+    
+    self.__possible_grenres = self.__spotify.recommendation_genre_seeds()["genres"]
+    
+    #methodList = [method for method in dir(self.__spotify) if callable(getattr(self.__spotify, method))]
+    #print(methodList)
+    #input()
+    
+
+  def play(self, genre, energy, tempo, valence, wait = True):
+    
+    if genre not in self.__possible_grenres:
+      print(genre + " not available: ")
+      print(self.__possible_grenres)
+      return
+    
+    
+    if self.__rec_last_genre != genre:
+      self.__rec_last_genre = genre
+      self.__rec_limit = 1
+    
+    next_track = None
+    while next_track == None:
+      print("* Get recommendations (" + str(self.__rec_limit) + ")")
+      seed_tracks = None
+      
+      if self.__rec_limit > 1 and len(self.__played_song_ids) > 0:
+        recommendations = self.__spotify.recommendations(seed_tracks=self.__played_song_ids[-5:], limit=self.__rec_limit, target_energy=energy, target_tempo=tempo, target_valence=valence)
+      else:
+        recommendations = self.__spotify.recommendations(seed_genres=[genre], limit=self.__rec_limit, target_energy=energy, target_tempo=tempo, target_valence=valence)
+      
+      if len(recommendations['tracks']) == 0:
+        print("@ Did not get any recommendations")
+      
+      for r in recommendations['tracks']:
+        if r['id'] not in self.__played_song_ids:
+          print("* Found " + str(r["id"]))
+          next_track = r
+          break
+        else:
+          print("* Played already: " + str(r["id"]))
+      
+      if next_track == None:
+        self.__rec_limit = self.__rec_limit * 2
+        print("* Setting Limit to: " + str(self.__rec_limit))
+      
+      
+    print('* Recommendation ----------')
+    print(next_track['id'])
+    print(next_track["artists"][0]["name"])
+    print(next_track["album"]["name"])
+    print(next_track["name"])
+    print('                 ----------')
+    print('* Append to Playlist ...')
+    self.__spotify.user_playlist_add_tracks(self.__user_id, self.__playlist_id, [next_track['id']])
+    self.__played_song_ids.append(next_track['id'])
+    
+    if wait:
+      #current_track = self.__spotify.current_user_playing_track()
+      current_track = self.__spotify.current_playback()
+      #self.pp.pprint(current_track)
+      if current_track['is_playing']:
+        progress = current_track['progress_ms']
+        length = current_track['item']['duration_ms']
+        wait = length - progress
+        print("Sleeping for " + str(wait) + " ms")
+        time.sleep(wait / 1000)
+    
+    print("* Start playback")
+    try:
+      self.__spotify.start_playback(uris = [next_track['uri']])
+    except spotipy.client.SpotifyException:
+      print("@ Could not start Playback - you need to start Playlist yourself!")
+
 
   def test(self):
     print('SEEDS ----------')
     genre_seeds = self.__spotify.recommendation_genre_seeds()["genres"]
-    print(genre_seeds)
+    # print(genre_seeds)
 
-    pp = pprint.PrettyPrinter()
+    genre = genre_seeds[random.randint(0, len(genre_seeds) - 1)]
 
     while True:
-
-      genre = genre_seeds[random.randint(0, len(genre_seeds) - 1)]
-
-      # acousticness
-      # danceability = 1
-      # duration_ms
-      # * energy
-      # instrumentalness
-      # # key
-      # liveness = 0
-      # * loudness
-      # # mode
-      # popularity
-      # * speechiness
-      # * tempo
-      # # time_signature
-      # * valence
-
 
       # Variabel:
       tempo = 120
@@ -73,21 +194,34 @@ class spot_control():
       valence = 1
       liveness = 0
       
-      recommendations = self.__spotify.recommendations(seed_genres=[genre], limit=1, target_danceability=danceability, target_liveness=liveness, target_valence=valence, target_tempo=tempo) # , target_tempo=tempo, target_danceability=danceability, target_liveness=liveness, target_valence=valence
-      print('RECOMMENDATIONS ----------' + genre)
-      #pp.pprint(recommendations)
+      if self.__rec_limit > 1:
+        
+        seed_tracks = self.__played_song_ids[-5:]
+        print("===== Searching with", end=' ')
+        print(seed_tracks)
+        recommendations = self.__spotify.recommendations(seed_tracks=seed_tracks, limit=self.__rec_limit, target_danceability=danceability, target_liveness=liveness, target_valence=valence, target_tempo=tempo)
+      else:
+        print("===== Searching for " + genre)
+        recommendations = self.__spotify.recommendations(seed_genres=[genre], limit=self.__rec_limit, target_danceability=danceability, target_liveness=liveness, target_valence=valence, target_tempo=tempo) # , target_tempo=tempo, target_danceability=danceability, target_liveness=liveness, target_valence=valence
       
-      print(recommendations['tracks'][0]["artists"][0]["name"])
-      print(recommendations['tracks'][0]["album"]["name"])
-      print(recommendations['tracks'][0]["name"])
+      next_track = None
+      for r in recommendations['tracks']:
+        if r['id'] not in self.__played_song_ids:
+          next_track = r
+          break
+      
+      if next_track == None:
+        self.__rec_limit = self.__rec_limit * 2
+        print("* Setting Limit to: " + str(self.__rec_limit))
+      else:
+        self.__rec_limit = 1
+        print('RECOMMENDATION ----------' + genre)
+        print(next_track['id'])
+        print(next_track["artists"][0]["name"])
+        print(next_track["album"]["name"])
+        print(next_track["name"])
+        self.__played_song_ids.append(next_track['id'])
     
       time.sleep(1)
     
-    #search = self.__spotify.search("artist:muse", type="artist")
-    
-    #print('SEARCH ----------')
-    #print(search)
-    
     print("End")
-    
-    
