@@ -117,9 +117,19 @@ https://grantwinney.com/how-to-create-a-raspberry-pi-virtual-machine-vm-in-virtu
 q-learning:
 source: https://github.com/rlcode/reinforcement-learning/
 
+---
 mac:
 
 python3 --version
 python3 -m pip install -r requirements.txt
 sudo python3 -m pip uninstall numpy
-python3 -m pip install numpy==1.12.1
+python3 -m pip install numpy==1.12.
+python3 -m pip install numpy
+
+python3 -m pip list
+
+---
+
+python3 q_learning_agent.py
+
+
