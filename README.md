@@ -114,3 +114,12 @@ $ cmake -D CMAKE_BUILD_TYPE=RELEASE \
 Source:
 https://grantwinney.com/how-to-create-a-raspberry-pi-virtual-machine-vm-in-virtualbox/
 
+q-learning:
+source: https://github.com/rlcode/reinforcement-learning/
+
+mac:
+
+python3 --version
+python3 -m pip install -r requirements.txt
+sudo python3 -m pip uninstall numpy
+python3 -m pip install numpy==1.12.1
