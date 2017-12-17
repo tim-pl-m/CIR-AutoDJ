@@ -14,12 +14,15 @@ spotcontrol = spot_control.spot_control(False)
 
 webservice.run()
 
+# getRandomParamter();
+
 while True:
-  
-  
+
   votestatus = djstatus.get_votestats()
-  
+
   print(str(votestatus[0]) + " :: " + str(votestatus[1]))
-  
-  
+
+  # parameterList = getNextParamters()
+
+
   time.sleep(1)
