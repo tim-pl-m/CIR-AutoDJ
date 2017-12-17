@@ -16,7 +16,10 @@ webservice.run()
 
 while True:
   
-  print("*")
+  
+  votestatus = djstatus.get_votestats()
+  
+  print(str(votestatus[0]) + " :: " + str(votestatus[1]))
   
   
   time.sleep(1)

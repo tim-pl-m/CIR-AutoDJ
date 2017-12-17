@@ -50,6 +50,11 @@ def get_vote():
   else:
     return 0
 
+def get_votestats():
+  global __current_vote
+  global __current_vote_count
+  return [__current_vote, __current_vote_count]
+
 def set_song(song):
   global __lock
   global __current_song
