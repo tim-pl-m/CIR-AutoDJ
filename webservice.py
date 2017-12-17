@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from _thread import start_new_thread
+#from _thread import start_new_thread
 
-import threading
+
 
 #from SocketServer import ThreadingMixIn
 #from http.server import ThreadingMixIn

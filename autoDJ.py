@@ -5,14 +5,21 @@ import spot_control
 import djstatus
 import webservice
 
+import threading
+
 import time
 
+import MovementDetectionTest1.0 as mvd
 
 #djstat = djstatus.djstatus()
 
 spotcontrol = spot_control.spot_control(False)
 
-webservice.run()
+webcam = mvd.diffDetection()
+
+threading.Thread(target=webservice.run()).start()
+threading.Thread(target=webcam.run()).start()
+
 
 # getRandomParamter();
 
