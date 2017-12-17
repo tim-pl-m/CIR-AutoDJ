@@ -9,7 +9,9 @@ import threading
 
 import time
 
-import MovementDetectionTest1.0 as mvd
+import MovementDetection as mvd
+
+import learning
 
 #djstat = djstatus.djstatus()
 
@@ -20,16 +22,34 @@ webcam = mvd.diffDetection()
 threading.Thread(target=webservice.run()).start()
 threading.Thread(target=webcam.run()).start()
 
+qlearn = learning.learning()
 
 # getRandomParamter();
 
 while True:
 
+  params = qlearn.getNextParamters()
+
+  duration = spotcontrol.play(params[0][0], params[1], params[3], params[2], True)
+  djstatus.clear_vote()
+
+  seconds = float(duration) / 1000 - 5
+  if seconds < 5:
+    seconds = 5
+
+  song = djstatus.get_song()
+  
+  print("Playing " + str(song))
+  print("Sleep for " + str(seconds) + " seconds")
+  time.sleep(seconds)
+
   votestatus = djstatus.get_votestats()
+  moodstatus = djstatus.get_mood()
+  allmood = moodstatus
+  if votestatus[1] > 0:
+    allmood += float(votestatus[0]) / votestatus[1]
+    allmood = allmood / 2
 
-  print(str(votestatus[0]) + " :: " + str(votestatus[1]))
-
+  #print(str(votestatus[0]) + " :: " + str(votestatus[1]))
+  qlearn.learn(allmood)
   # parameterList = getNextParamters()
-
-
-  time.sleep(1)

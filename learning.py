@@ -6,15 +6,15 @@ from random import uniform
 
 class learning():
 
-genres = ["drum-and-bass",
-"edm",
-"electro",
-"electronic",
-"funk",
-"groove"]
-
-
-def getNextParamters(self):
+  genres = ["drum-and-bass",
+  "edm",
+  "electro",
+  "electronic",
+  "funk",
+  "groove"]
+  
+  
+  def getNextParamters(self):
     random.shuffle(genres)
 
     energy = uniform(0, 1)
@@ -29,5 +29,8 @@ def getNextParamters(self):
     return genres, energy, vallance, bpm
 # Genre(String aus der Liste genres), Energy(0-1), Vallance(0-1), Beats per Minute(60-180)
 
+  # Current percieved mood between 0 and 1 (float)
+  def learn(self, mood):
+    pass
 
 
