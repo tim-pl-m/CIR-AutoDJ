@@ -15,7 +15,7 @@ class learning():
   
   
   def getNextParamters(self):
-    random.shuffle(genres)
+    random.shuffle(self.genres)
 
     energy = uniform(0, 1)
 
@@ -26,7 +26,7 @@ class learning():
     # print(genres[1])
     # print(energy)
     # print(bpm)
-    return genres, energy, vallance, bpm
+    return self.genres, energy, vallance, bpm
 # Genre(String aus der Liste genres), Energy(0-1), Vallance(0-1), Beats per Minute(60-180)
 
   # Current percieved mood between 0 and 1 (float)

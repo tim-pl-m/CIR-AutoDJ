@@ -60,7 +60,7 @@ def set_song(song):
   global __current_song
   __lock.acquire()
   __current_song = song
-  __lock_release()
+  __lock.release()
 
 def get_song():
   global __current_song

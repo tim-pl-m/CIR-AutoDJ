@@ -53,8 +53,8 @@ def run(server_class=HTTPServer, handler_class=S, port=8080):
   httpd = server_class(server_address, handler_class)
   print('Starting httpd...')
   
-  threading.Thread(target=httpd.serve_forever).start()
-  
+  #threading.Thread(target=httpd.serve_forever).start()
+  httpd.serve_forever() 
   #ThreadingServer(('', 8080), handler_class).serve_forever()
   
   #start_new_thread(httpd.serve_forever())

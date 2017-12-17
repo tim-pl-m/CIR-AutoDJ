@@ -60,11 +60,11 @@ class spot_control():
     scope = ['user-modify-playback-state', 'playlist-read-private', 'playlist-modify-private', 'user-read-currently-playing', 'user-read-playback-state', 'playlist-modify-private']
     scope = " ".join(scope)
     
-    try:
-      token = util.prompt_for_user_token(username=scu, client_id = sci, client_secret=scs, redirect_uri=scr, scope=scope)
-    except (AttributeError, JSONDecodeError):
-      os.remove(f".cache-{scu}")
-      token = util.prompt_for_user_token(username=scu, client_id = sci, client_secret=scs, redirect_uri=scr, scope=scope)
+    #try:
+    token = util.prompt_for_user_token(username=scu, client_id = sci, client_secret=scs, redirect_uri=scr, scope=scope)
+    #except (AttributeError, JSONDecodeError):
+    #  os.remove(f".cache-{scu}")
+    #  token = util.prompt_for_user_token(username=scu, client_id = sci, client_secret=scs, redirect_uri=scr, scope=scope)
     
     self.__user_id = scu
     
@@ -184,7 +184,7 @@ class spot_control():
       #current_track = self.__spotify.current_user_playing_track()
       current_track = self.__spotify.current_playback()
       #self.pp.pprint(current_track)
-      if current_track['is_playing']:
+      if not current_track == None and current_track['is_playing']:
         progress = current_track['progress_ms']
         length = current_track['item']['duration_ms']
         wait = length - progress
@@ -200,10 +200,12 @@ class spot_control():
     #self.__djstatus.set_song(next_track['id'] + ":" + next_track['name'])
     djstatus.set_song(next_track['id'] + ":" + next_track['name'])
 
+    duration=1000
     current_track = self.__spotify.current_playback()
-    progress = current_track['progress_ms']
-    length = current_track['item']['duration_ms']
-    duration = length - progress
+    if current_track != None:
+      progress = current_track['progress_ms']
+      length = current_track['item']['duration_ms']
+      duration = length - progress
     return duration
 
 

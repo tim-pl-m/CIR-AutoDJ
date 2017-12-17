@@ -8,7 +8,7 @@ import djstatus
 
 class diffDetection:
 
-  sec = 1   # number of seconds
+  sec = 4   # number of seconds
   width = 800
 
   textIn = 0
@@ -101,34 +101,34 @@ class diffDetection:
           self.maxErr = error
           print ("Max error: " + str(self.maxErr))
         self.errorSum += error
-          else:
+      else:
         self.oldFrame = gray
     
-          self.frameCount += 1
-          if(self.frameCount == self.sec*24):
+      self.frameCount += 1
+      if(self.frameCount == self.sec*24):
         self.meanError = self.errorSum/self.frameCount
         self.errorSum = 0
         self.frameCount = 1
         djstatus.webcam_mood(self.meanError)
-        print ("Mean error: " + str(self.meanError))
+        #print ("Mean error: " + str(self.meanError))
       
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-          break
+      if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
     
-        frame = gray # black white or color ? 
+      frame = gray # black white or color ? 
       
-        cv2.putText(frame, "Current error: {}".format(str(error)), (10, 30),
+      cv2.putText(frame, "Current error: {}".format(str(error)), (10, 30),
                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        cv2.putText(frame, "Mean error (24 frames): {}".format(str(self.meanError)), (10, 50),
+      cv2.putText(frame, "Mean error (24 frames): {}".format(str(self.meanError)), (10, 50),
                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        cv2.putText(frame, "Max error: {}".format(str(self.maxErr)), (10, 70),
+      cv2.putText(frame, "Max error: {}".format(str(self.maxErr)), (10, 70),
                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        cv2.imshow("Security Feed", frame)
+      cv2.imshow("Security Feed", frame)
     
     # cleanup the camera and close any open windows
     camera.release()
     cv2.destroyAllWindows() 
 
-d = diffDetection()
-d.run()
+#d = diffDetection()
+#d.run()
   
