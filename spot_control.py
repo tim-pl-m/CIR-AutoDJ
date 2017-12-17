@@ -10,6 +10,8 @@ import random
 import time
 import pprint
 
+import djstatus
+
 # Workarround
 import os
 from json.decoder import JSONDecodeError
@@ -27,7 +29,12 @@ class spot_control():
   
   __possible_grenres = []
   
+#  __djstatus = None
+  
   def __init__(self, empty = True):
+    
+    #self.__djstatus = djstatus
+    
     print(os.path.dirname(spotipy.__file__))
     
     f = open("spotify_credentials", "r")
@@ -43,6 +50,12 @@ class spot_control():
         scu = input("Please provide spotify username: ")
       break
     f.close()
+    
+    f = open('genres', 'r')
+    genres = f.readlines()
+    for i in range(len(genres)):
+      genres[i] = genres[i].strip()
+    f.close()  
     
     scope = ['user-modify-playback-state', 'playlist-read-private', 'playlist-modify-private', 'user-read-currently-playing', 'user-read-playback-state', 'playlist-modify-private']
     scope = " ".join(scope)
@@ -106,6 +119,14 @@ class spot_control():
     
     self.__possible_grenres = self.__spotify.recommendation_genre_seeds()["genres"]
     
+    for i in range(len(genres) - 1, -1, -1):
+      if genres[i] not in self.__possible_grenres:
+        del genres[i]
+    
+    self.__possible_grenres = genres
+    
+    #print("Possible Genres:")
+    #print(self.__possible_grenres)
     #methodList = [method for method in dir(self.__spotify) if callable(getattr(self.__spotify, method))]
     #print(methodList)
     #input()
@@ -175,6 +196,15 @@ class spot_control():
       self.__spotify.start_playback(uris = [next_track['uri']])
     except spotipy.client.SpotifyException:
       print("@ Could not start Playback - you need to start Playlist yourself!")
+
+    #self.__djstatus.set_song(next_track['id'] + ":" + next_track['name'])
+    djstatus.set_song(next_track['id'] + ":" + next_track['name'])
+
+    current_track = self.__spotify.current_playback()
+    progress = current_track['progress_ms']
+    length = current_track['item']['duration_ms']
+    duration = length - progress
+    return duration
 
 
   def test(self):
