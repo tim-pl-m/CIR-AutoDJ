@@ -13,11 +13,14 @@ import MovementDetection as mvd
 
 import learning
 
+
+print("MVD ...")
+webcam = mvd.diffDetection()
+webcam.grabFrame()
+
 #djstat = djstatus.djstatus()
 print("Spotify ...")
 spotcontrol = spot_control.spot_control(False)
-print("MVD ...")
-webcam = mvd.diffDetection()
 
 print("Threading ...")
 threading.Thread(target=webservice.run).start()
