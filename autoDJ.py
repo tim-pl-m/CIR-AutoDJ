@@ -13,16 +13,17 @@ import MovementDetection as mvd
 
 import learning
 
+loop_seconds = 10
 
-print("MVD ...")
-webcam = mvd.diffDetection()
+print("# Initialising Movement Detection ...")
+webcam = mvd.diffDetection(loop_seconds - 1)
 webcam.grabFrame()
 
 #djstat = djstatus.djstatus()
-print("Spotify ...")
+print("# Initialising Spotify ...")
 spotcontrol = spot_control.spot_control(False)
 
-print("Threading ...")
+print("# Starting Threads ...")
 threading.Thread(target=webservice.run).start()
 threading.Thread(target=webcam.run).start()
 
@@ -30,7 +31,7 @@ qlearn = learning.learning()
 
 # getRandomParamter();
 
-print("Loop ...")
+print("# Enter Main-Loop ...")
 
 wait = False
 while True:
@@ -44,12 +45,12 @@ while True:
   if seconds < 5:
     seconds = 5
 
-  seconds=5
+  seconds = loop_seconds
 
   song = djstatus.get_song()
   
-  print("Playing " + str(song))
-  print("Sleep for " + str(seconds) + " seconds")
+  print("# Playing " + str(song))
+  print("# Sleep for " + str(seconds) + " seconds")
   time.sleep(seconds)
 
   votestatus = djstatus.get_votestats()
@@ -59,7 +60,7 @@ while True:
     allmood += float(votestatus[0]) / votestatus[1]
     allmood = allmood / 2
 
-  print("Learning Feedback: " + str(allmood))
+  print("# Learning Feedback: " + str(allmood))
   #print(str(votestatus[0]) + " :: " + str(votestatus[1]))
   qlearn.learn(allmood)
   # parameterList = getNextParamters()

@@ -35,7 +35,7 @@ class spot_control():
     
     #self.__djstatus = djstatus
     
-    print(os.path.dirname(spotipy.__file__))
+    #print(os.path.dirname(spotipy.__file__))
     
     f = open("spotify_credentials", "r")
     c = csv.reader(f)
@@ -76,7 +76,7 @@ class spot_control():
     playlists = self.__spotify.current_user_playlists()
     for l in playlists['items']:
       if l['name'] == "AutoDJ":
-        print("* Found: " + l['id'])
+        print("  -S Found Playlist: " + l['id'])
         # self.pp.pprint(l)
         
         self.__playlist_id = l['id']
@@ -87,7 +87,7 @@ class spot_control():
         break
     
     if self.__playlist_id == None:
-      print("* Creating Playlist ...")
+      print("  -S Creating Playlist ...")
       playlist = self.__spotify.user_playlist_create(user=self.__user_id, name="AutoDJ", public=False)
       
       # self.pp.pprint(playlist)
@@ -95,12 +95,12 @@ class spot_control():
       if 'id' in playlist:
         self.__playlist_id = playlist['id']
       else:
-        print("@ Could not create playlist")
+        print("  @S Could not create playlist")
         exit(1)
     
     # Empty playlist
     if empty and tracks != None:
-      print("* Deleting all tracks from playlist")
+      print("  -S Deleting all tracks from playlist")
       track_uris = []
       #self.pp.pprint(tracks)
       for t in tracks['items']:
@@ -135,7 +135,7 @@ class spot_control():
   def play(self, genre, energy, tempo, valence, wait = True):
     
     if genre not in self.__possible_grenres:
-      print(genre + " not available: ")
+      print("  @S " + str(genre) + " not available: ")
       print(self.__possible_grenres)
       return
     
@@ -145,8 +145,9 @@ class spot_control():
       self.__rec_limit = 1
     
     next_track = None
+    print("  -S Get recommendations")
     while next_track == None:
-      print("* Get recommendations (" + str(self.__rec_limit) + ")")
+      #print("* Get recommendations (" + str(self.__rec_limit) + ")")
       seed_tracks = None
       
       if self.__rec_limit > 1 and len(self.__played_song_ids) > 0:
@@ -155,28 +156,29 @@ class spot_control():
         recommendations = self.__spotify.recommendations(seed_genres=[genre], limit=self.__rec_limit, target_energy=energy, target_tempo=tempo, target_valence=valence)
       
       if len(recommendations['tracks']) == 0:
-        print("@ Did not get any recommendations")
+        print("  @S Did not get any recommendations")
       
       for r in recommendations['tracks']:
         if r['id'] not in self.__played_song_ids:
-          print("* Found " + str(r["id"]))
+          #print("* Found " + str(r["id"]))
           next_track = r
           break
         else:
-          print("* Played already: " + str(r["id"]))
+          pass
+          #print("* Played already: " + str(r["id"]))
       
       if next_track == None:
         self.__rec_limit = self.__rec_limit * 2
-        print("* Setting Limit to: " + str(self.__rec_limit))
+        #print("* Setting Limit to: " + str(self.__rec_limit))
       
       
-    print('* Recommendation ----------')
-    print(next_track['id'])
-    print(next_track["artists"][0]["name"])
-    print(next_track["album"]["name"])
-    print(next_track["name"])
-    print('                 ----------')
-    print('* Append to Playlist ...')
+    #print('* Recommendation ----------')
+    #print(next_track['id'])
+    #print(next_track["artists"][0]["name"])
+    #print(next_track["album"]["name"])
+    #print(next_track["name"])
+    #print('                 ----------')
+    print('  -S Append to Playlist ' + str(next_track['name']))
     self.__spotify.user_playlist_add_tracks(self.__user_id, self.__playlist_id, [next_track['id']])
     self.__played_song_ids.append(next_track['id'])
     
@@ -188,17 +190,18 @@ class spot_control():
         progress = current_track['progress_ms']
         length = current_track['item']['duration_ms']
         wait = length - progress
-        print("Sleeping for " + str(wait) + " ms")
+        print("  -S Sleeping for " + str(wait) + " ms")
         time.sleep(wait / 1000)
     
-    print("* Start playback")
+    print("  -S Start playback")
     try:
       self.__spotify.start_playback(uris = [next_track['uri']])
     except spotipy.client.SpotifyException:
-      print("@ Could not start Playback - you need to start Playlist yourself!")
+      print("  @S Could not start Playback - you need to start Playlist yourself!")
 
     #self.__djstatus.set_song(next_track['id'] + ":" + next_track['name'])
-    djstatus.set_song(next_track['id'] + ":" + next_track['name'])
+    #djstatus.set_song(next_track['id'] + ":" + next_track['name'])
+    djstatus.set_song(next_track['name'])
 
     duration=1000
     current_track = self.__spotify.current_playback()

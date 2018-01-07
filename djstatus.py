@@ -26,7 +26,10 @@ def vote(increase):
   global __current_vote_count
   
   __lock.acquire()
-  __current_vote += increase
+  if __current_vote + increase > 0 :
+    __current_vote += increase
+  else:
+    __current_vote = 0
   __current_vote_count += 1
   __lock.release()
 

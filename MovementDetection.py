@@ -36,6 +36,9 @@ class diffDetection:
   __gauss1 = 20
   __gauss2 = 60
 
+  def __init__(self, seconds = 4):
+    self.sec = seconds
+
   # Returns the mean error for an interval
   def getMeanError(self):
     return self.meanError
@@ -95,7 +98,7 @@ class diffDetection:
     while True:
       (grabbed, frame) = camera.read()
       if not grabbed:
-        print("Waiting for camera ...")
+        print("  @M Waiting for camera ...")
         time.sleep(1)
         continue
       
@@ -181,7 +184,7 @@ class diffDetection:
           self.oldFrame = self.newFrame
           if error > self.maxErr:
             self.maxErr = error
-            print ("Max error: " + str(self.maxErr))
+            #print("-M Max error: " + str(self.maxErr))
           self.errorSum += error
         else:
           self.oldFrame = gray
