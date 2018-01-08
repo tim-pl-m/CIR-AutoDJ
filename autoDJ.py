@@ -36,6 +36,7 @@ print("# Enter Main-Loop ...")
 wait = False
 while True:
 
+  print("# Get Next Parameters/State ...")
   params = qlearn.getNextParamters()
 
   duration = spotcontrol.play(params[0][0], params[1], params[3], params[2], wait)
