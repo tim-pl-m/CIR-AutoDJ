@@ -21,7 +21,7 @@ webcam.grabFrame()
 
 #djstat = djstatus.djstatus()
 print("# Initialising Spotify ...")
-spotcontrol = spot_control.spot_control(False)
+spotcontrol = spot_control.spot_control(True)
 
 print("# Starting Threads ...")
 threading.Thread(target=webservice.run).start()
