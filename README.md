@@ -134,3 +134,10 @@ python3 q_learning_agent.py
 
 errors:
 ModuleNotFoundError: No module named 'imutils'
+
+sources:
+https://vevurka.github.io/dsp17/python/cs/graph_in_python_matrix/
+https://en.wikipedia.org/wiki/Q-learning#Discount_factor
+
+idee für verififikation:
+?

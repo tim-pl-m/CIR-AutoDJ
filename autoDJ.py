@@ -38,7 +38,8 @@ while True:
 
   print("# Get Next Parameters/State ...")
   params = qlearn.getNextParamters()
-
+  # params[0][0] is genre
+  #TODO consider reduction to genre+energy
   duration = spotcontrol.play(params[0][0], params[1], params[3], params[2], wait)
   djstatus.clear_vote()
 
@@ -49,7 +50,7 @@ while True:
   seconds = loop_seconds
 
   song = djstatus.get_song()
-  
+
   print("# Playing " + str(song))
   print("# Sleep for " + str(seconds) + " seconds")
   time.sleep(seconds)
