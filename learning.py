@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import random
+import operator
 from random import randint
 from random import uniform
 
@@ -21,7 +22,7 @@ class learning():
   # "groove",
   "electro"
   ]
-  # TODO fill in missing genres from file "genres"
+  # TODO consider fill in missing genres from file "genres"
 
   # q-learning parameter
   learning_rate = 0.01
@@ -50,20 +51,48 @@ class learning():
             old_value = matrix[x][y]
             # plain q-learning forumla here
             new_value = (1-learning_rate)*old_value + learning_rate*(reward + discount_factor*maxQ(x,y))
-            
-            #TODO add q-learning-value
+
             matrix[x][y] = new_value
             matrix[y][x] = new_value
-            #TODO adjust slightly all values for the genre
+            #TODO consider to adjust slightly all values for this genre
+            #TODO test this first!
+            # if new_value > 0:
+            #     for x in range(0, 3):
+            #         for y in range(0, 3):
+            # if new_value < 0:
             #TODO think about this
 
   def getNextParamters(self):
     # pick next vertice
     # TODO maybe catching errors is needed here
-    if matrix[actual_state_x][actual_state_y + 1]
+    # TODO consider improvement
+    # TODO consider 8 values instead of 4 to speed up decision
+    # if matrix[actual_state_x][actual_state_y + 1]
+    listOfSurroundingValues =  {'up':matrix[actual_state_x][actual_state_y - 1], 'down':matrix[actual_state_x][actual_state_y + 1], 'right': matrix[actual_state_x + 1][actual_state_y],'left': matrix[actual_state_x - 1 + 1][actual_state_y]}
+    newVertice = max(listOfSurroundingValues.iteritems(), key=operator.itemgetter(1))[0]
+    # example:
+    # stats = {'a':1000, 'b':3000, 'c': 100}
+    # max(stats.iteritems(), key=operator.itemgetter(1))[0]
+    if newVertice == 'up':
+        # actual_state_x = actual_state_x
+        actual_state_y = actual_state_y - 1
+    if newVertice == 'down':
+        # actual_state_x = actual_state_x
+        actual_state_y = actual_state_y + 1
+    if newVertice == 'right':
+        actual_state_x = actual_state_x + 1
+
+    if newVertice == 'left':
+        actual_state_x = actual_state_x  -1
+
 
     #interpret matrix
-    genre =
+    # TODO make dynamic
+    # genre:
+    # TODO check if genres[0]
+    if actual_state_x < 3:
+        genre = genres[0][0]
+    # bpm:
     bpm =
     #TODO consider reduction to genre+bpm
     #pick unlearned values randomly
