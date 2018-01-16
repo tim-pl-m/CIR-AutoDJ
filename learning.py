@@ -32,10 +32,10 @@ class learning():
   #matrix definitions
   #subdivide genres
   scaling = 3
-  number_of_vertices = genres.length * scaling
+  numberOfVertices = len(genres) * scaling
 
   #create matrix
-  matrix = [[0] * number_of_vertices for _ in range(number_of_vertices)]
+  matrix = [[0] * numberOfVertices for _ in range(numberOfVertices)]
 
   #save actual vertice
   # TODO consider starting from a random state
@@ -93,16 +93,16 @@ class learning():
     if actual_state_x < 3:
         # TODO self.genres needed or just better style?
         genre = genres[0]
-    if actual_state_x > 2 && actual_state_x < 6 :
+    if actual_state_x > 2 & actual_state_x < 6 :
         genre = genres[1]
     if actual_state_x > 5:
         genre = genres[2]
     # bpm:
-    if (actual_state_x mod 3) == 0:
+    if (actual_state_x % 3) == 0:
         bpm = randint(60, 100)
-    if (actual_state_x mod 3) == 1:
+    if (actual_state_x % 3) == 1:
         bpm = randint(100, 140)
-    if (actual_state_x mod 3) == 2:
+    if (actual_state_x % 3) == 2:
         bpm = randint(140, 180)
     #TODO consider reduction to genre+bpm
     #pick unlearned values randomly
