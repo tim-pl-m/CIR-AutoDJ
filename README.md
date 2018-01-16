@@ -132,4 +132,5 @@ python3 -m pip list
 
 python3 q_learning_agent.py
 
-
+errors:
+ModuleNotFoundError: No module named 'imutils'
