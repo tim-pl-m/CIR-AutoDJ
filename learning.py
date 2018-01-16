@@ -88,12 +88,22 @@ class learning():
 
     #interpret matrix
     # TODO make dynamic
+    # TODO default values needed?
     # genre:
-    # TODO check if genres[0]
     if actual_state_x < 3:
-        genre = genres[0][0]
+        # TODO self.genres needed or just better style?
+        genre = genres[0]
+    if actual_state_x > 2 && actual_state_x < 6 :
+        genre = genres[1]
+    if actual_state_x > 5:
+        genre = genres[2]
     # bpm:
-    bpm =
+    if (actual_state_x mod 3) == 0:
+        bpm = randint(60, 100)
+    if (actual_state_x mod 3) == 1:
+        bpm = randint(100, 140)
+    if (actual_state_x mod 3) == 2:
+        bpm = randint(140, 180)
     #TODO consider reduction to genre+bpm
     #pick unlearned values randomly
     energy = uniform(0, 1)
@@ -103,8 +113,7 @@ class learning():
     print(genres[0][0])
     print(energy)
     print(bpm)
-    # TODO fix genre-representation
-    return self.genres, energy, vallance, bpm
+    return genre, energy, vallance, bpm
 # Genre(String aus der Liste genres), Energy(0-1), Vallance(0-1), Beats per Minute(60-180)
 
   # Current percieved mood between 0 and 1 (float)
@@ -120,4 +129,4 @@ def getRandomParamters(self):
     energy = uniform(0, 1)
     vallance = uniform(0, 1)
     bpm = randint(60, 180)
-    return self.genres, energy, vallance, bpm
+    return self.genres[0], energy, vallance, bpm

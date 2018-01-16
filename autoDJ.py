@@ -40,7 +40,7 @@ while True:
   params = qlearn.getNextParamters()
   # params[0][0] is genre
   #TODO consider reduction to genre+energy
-  duration = spotcontrol.play(params[0][0], params[1], params[3], params[2], wait)
+  duration = spotcontrol.play(params[0], params[1], params[3], params[2], wait)
   djstatus.clear_vote()
 
   seconds = float(duration) / 1000 - 5
