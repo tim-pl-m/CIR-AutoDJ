@@ -41,12 +41,16 @@ class learning():
   actual_state_x = 0
   actual_state_y = 0
 
+  def maxQ(self, x, y):
+      # TODO adjust if discount_factor implemented
+    return 0
   def adjustEdgeAndMatrix(self, x, y, reward):
       #in first iteation undirected
       # TODO consider directed
             old_value = matrix[x][y]
             # plain q-learning forumla here
-            new_value = (1-learning_rate)*old_value + learning_rate*(reward+discount_factor*)
+            new_value = (1-learning_rate)*old_value + learning_rate*(reward + discount_factor*maxQ(x,y))
+            
             #TODO add q-learning-value
             matrix[x][y] = new_value
             matrix[y][x] = new_value
