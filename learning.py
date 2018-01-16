@@ -9,43 +9,44 @@ from random import uniform
 from collections import defaultdict
 
 
-class learning():
+class learning(object):
 
-  genres = [
-  # "drum-and-bass",
-  # "edm",
-  "indie",
-  # "punk",
-  "reggaeton",
-  # "electronic",
-  # "funk",
-  # "groove",
-  "electro"
-  ]
-  # TODO consider fill in missing genres from file "genres"
+    def __init__(self):
+      genres = [
+      # "drum-and-bass",
+      # "edm",
+      "indie",
+      # "punk",
+      "reggaeton",
+      # "electronic",
+      # "funk",
+      # "groove",
+      "electro"
+      ]
+      # TODO consider fill in missing genres from file "genres"
 
-  # q-learning parameter
-  learning_rate = 0.01
-  #TODO consider not myoptic(so make it longer sighted)
-  discount_factor = 0
+      # q-learning parameter
+      learning_rate = 0.01
+      #TODO consider not myoptic(so make it longer sighted)
+      discount_factor = 0
 
-  #matrix definitions
-  #subdivide genres
-  scaling = 3
-  numberOfVertices = len(genres) * scaling
+      #matrix definitions
+      #subdivide genres
+      scaling = 3
+      numberOfVertices = len(genres) * scaling
 
-  #create matrix
-  matrix = [[0] * numberOfVertices for _ in range(numberOfVertices)]
+      #create matrix
+      matrix = [[0] * numberOfVertices for _ in range(numberOfVertices)]
 
-  #save actual vertice
-  # TODO consider starting from a random state
-  actual_state_x = 0
-  actual_state_y = 0
+      #save actual vertice
+      # TODO consider starting from a random state
+      actual_state_x = 0
+      actual_state_y = 0
 
-  def maxQ(self, x, y):
+def maxQ(self, x, y):
       # TODO adjust if discount_factor implemented
-    return 0
-  def adjustEdgeAndMatrix(self, x, y, reward):
+      return 0
+def adjustEdgeAndMatrix(self, x, y, reward):
       #in first iteation undirected
       # TODO consider directed
             old_value = matrix[x][y]
@@ -62,7 +63,7 @@ class learning():
             # if new_value < 0:
             #TODO think about this
 
-  def getNextParamters(self):
+def getNextParamters(self):
     # pick next vertice
     # TODO maybe catching errors is needed here
     # TODO consider improvement
@@ -117,7 +118,7 @@ class learning():
 # Genre(String aus der Liste genres), Energy(0-1), Vallance(0-1), Beats per Minute(60-180)
 
   # Current percieved mood between 0 and 1 (float)
-  def learn(self, mood):
+def learn(self, mood):
     # calculate reward
     # TODO
     # adjust old value with reward
