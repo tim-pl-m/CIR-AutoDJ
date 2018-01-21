@@ -9,7 +9,7 @@ from random import uniform
 from collections import defaultdict
 
 
-class learning(object):
+class learning():
 
   matrix = None
   learning_rate = None
@@ -21,28 +21,22 @@ class learning(object):
   actual_state_y = 0
 
   def __init__(self):
-    global matrix
-    global learning_rate
-    global discount_factor
-    global numberOfVertices
-    global genres
-    global bpm
     
     f = open('genres', 'r')
-    genres = f.readlines()
-    for i in range(len(genres)):
-      genres[i] = genres[i].strip()
+    self.genres = f.readlines()
+    for i in range(len(self.genres)):
+      self.genres[i] = self.genres[i].strip()
     f.close()  
 
     # q-learning parameter
-    learning_rate = 0.01
-    discount_factor = 0
+    self.learning_rate = 0.01
+    self.discount_factor = 0
 
     #matrix definitions
-    numberOfVertices = len(genres) * len(bpm)
+    self.numberOfVertices = len(self.genres) * len(self.bpm)
 
     #create matrix
-    matrix = [[0] * numberOfVertices for _ in range(numberOfVertices)]
+    self.matrix = [[0] * self.numberOfVertices for _ in range(self.numberOfVertices)]
 
   
   def maxQ(self, x, y):
@@ -50,53 +44,55 @@ class learning(object):
     return 0
         
   def adjustEdgeAndMatrix(self, x, y, reward):
-    global matrix
     
     #in first iteation undirected
-    old_value = matrix[x][y]
+    old_value = self.matrix[x][y]
     # plain q-learning forumla here
-    new_value = (1-learning_rate)*old_value + learning_rate*(reward + discount_factor*maxQ(x,y))
+    new_value = (1-self.learning_rate)*old_value + self.learning_rate*(reward + self.discount_factor*self.maxQ(x,y))
 
-    matrix[x][y] = new_value
-    matrix[y][x] = new_value
+    self.matrix[x][y] = new_value
+    self.matrix[y][x] = new_value
   
   def getNextParamters(self):
-    global actual_state_x
-    global actual_state_y
-    global bpm
-    global genres
     
     # pick next vertice
     # if matrix[actual_state_x][actual_state_y + 1]
-    listOfSurroundingValues =  {'up':matrix[actual_state_x][actual_state_y - 1], 'down':matrix[actual_state_x][actual_state_y + 1], 'right': matrix[actual_state_x + 1][actual_state_y],'left': matrix[actual_state_x - 1 + 1][actual_state_y]}
-    newVertice = max(listOfSurroundingValues.iteritems(), key=operator.itemgetter(1))[0]
+    listOfSurroundingValues =  {'up':self.matrix[self.actual_state_x][self.actual_state_y - 1], 'down':self.matrix[self.actual_state_x][self.actual_state_y + 1], 'right': self.matrix[self.actual_state_x + 1][self.actual_state_y],'left': self.matrix[self.actual_state_x - 1 + 1][self.actual_state_y]}
+    # newVertice = max(listOfSurroundingValues.iteritems(), key=operator.itemgetter(1))[0]
+    
+    newVertice = None
+    newValue = None
+    for key in listOfSurroundingValues:
+      if newValue == None or listOfSurroundingValues[key] > newValue:
+        newVertice = key
+        newValue = listOfSurroundingValues[key]
+    
     # example:
     # stats = {'a':1000, 'b':3000, 'c': 100}
     # max(stats.iteritems(), key=operator.itemgetter(1))[0]
     if newVertice == 'up':
       # actual_state_x = actual_state_x
-      actual_state_y = actual_state_y - 1
+      self.actual_state_y = self.actual_state_y - 1
     if newVertice == 'down':
       # actual_state_x = actual_state_x
-      actual_state_y = actual_state_y + 1
+      self.actual_state_y = self.actual_state_y + 1
     if newVertice == 'right':
-      actual_state_x = actual_state_x + 1
+      self.actual_state_x = self.actual_state_x + 1
 
     if newVertice == 'left':
-      actual_state_x = actual_state_x  -1
+      self.actual_state_x = self.actual_state_x  -1
 
 
-    genre_index = int(actual_state / 3)
-    bpm_index = actual_state % 3
+    genre_index = int(self.actual_state_x / 3)
+    bpm_index = self.actual_state_x % 3
 
-    return genre[genre_index], bpm[bpm_index]
+    return self.genres[genre_index], self.bpm[bpm_index]
 # Genre(String aus der Liste genres), Energy(0-1), Vallance(0-1), Beats per Minute(60-180)
   
     # Current percieved mood between 0 and 1 (float)
-  def learn(self, mood):
+  def learn(self, reward):
     # calculate reward
-    adjustEdgeAndMatrix(actual_state_x,actual_state_y, reward)
-    pass
+    self.adjustEdgeAndMatrix(self.actual_state_x,self.actual_state_y, reward)
   
 #  def getRandomParamters(self):
 #    random.shuffle(self.genres)
