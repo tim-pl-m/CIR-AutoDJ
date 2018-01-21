@@ -132,7 +132,7 @@ class spot_control():
     #input()
     
 
-  def play(self, genre, energy, tempo, valence, wait = True):
+  def play(self, genre, tempo, wait = True):
     
     if genre not in self.__possible_grenres:
       print("  @S " + str(genre) + " not available: ")
@@ -151,9 +151,9 @@ class spot_control():
       seed_tracks = None
       
       if self.__rec_limit > 1 and len(self.__played_song_ids) > 0:
-        recommendations = self.__spotify.recommendations(seed_tracks=self.__played_song_ids[-5:], limit=self.__rec_limit, target_energy=energy, target_tempo=tempo, target_valence=valence)
+        recommendations = self.__spotify.recommendations(seed_tracks=self.__played_song_ids[-5:], limit=self.__rec_limit, target_tempo=tempo)
       else:
-        recommendations = self.__spotify.recommendations(seed_genres=[genre], limit=self.__rec_limit, target_energy=energy, target_tempo=tempo, target_valence=valence)
+        recommendations = self.__spotify.recommendations(seed_genres=[genre], limit=self.__rec_limit, target_tempo=tempo)
       
       if len(recommendations['tracks']) == 0:
         print("  @S Did not get any recommendations")
@@ -220,14 +220,10 @@ class spot_control():
     genre = genre_seeds[random.randint(0, len(genre_seeds) - 1)]
 
     while True:
-
-      # Variabel:
-      tempo = 120
-      danceability = 1
       
-      # Fixed:
-      valence = 1
+      # Fixed Parameters:
       liveness = 0
+      danceability = 1
       
       if self.__rec_limit > 1:
         
